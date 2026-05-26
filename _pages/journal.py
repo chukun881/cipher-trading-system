@@ -515,6 +515,49 @@ def _render_delete_trades(db, trades: list) -> None:
                 st.rerun()
 
 
+def _render_edit_trades(db, trades: list) -> None:
+    """Allow editing of closed trade details."""
+    if not trades:
+        return
+
+    with st.expander("✏️ Edit Trades"):
+        for t in trades:
+            tid = t.get("id")
+            ticker = t.get("ticker", "?")
+
+            with st.container():
+                cols = st.columns([2, 2, 2, 2, 2, 1])
+                with cols[0]:
+                    new_ticker = st.text_input("Ticker", value=ticker, key=f"edit_ticker_{tid}", label_visibility="collapsed")
+                with cols[1]:
+                    new_buy_date = st.text_input("Buy Date", value=t.get("buy_date", ""), key=f"edit_buy_date_{tid}", label_visibility="collapsed")
+                with cols[2]:
+                    new_sell_date = st.text_input("Sell Date", value=t.get("sell_date", ""), key=f"edit_sell_date_{tid}", label_visibility="collapsed")
+                with cols[3]:
+                    new_buy_price = st.text_input("Buy Price", value=str(t.get("buy_price", "")), key=f"edit_buy_price_{tid}", label_visibility="collapsed")
+                with cols[4]:
+                    new_sell_price = st.text_input("Sell Price", value=str(t.get("sell_price", "")), key=f"edit_sell_price_{tid}", label_visibility="collapsed")
+                with cols[5]:
+                    if st.button("💾", key=f"save_trade_{tid}", help="Save changes"):
+                        try:
+                            bp = float(new_buy_price)
+                            sp = float(new_sell_price)
+                            vol = t.get("volume", 1)
+                            pnl = (sp - bp) * vol
+                            pnl_pct = ((sp - bp) / bp) * 100 if bp != 0 else 0
+                            db.conn.execute(
+                                "UPDATE trades SET ticker=?, buy_date=?, sell_date=?, buy_price=?, sell_price=?, pnl=?, pnl_pct=? WHERE id=?",
+                                (new_ticker.upper(), new_buy_date, new_sell_date, bp, sp, pnl, pnl_pct, tid),
+                            )
+                            db.conn.commit()
+                            st.success(f"Updated **{new_ticker.upper()}** trade #{tid}")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Update failed: {e}")
+
+                st.markdown("<hr style='margin:2px 0 8px 0'>", unsafe_allow_html=True)
+
+
 # ======================================================================
 # Main entry
 # ======================================================================
@@ -562,3 +605,4 @@ def show(db: TradingDB = None) -> None:
 
     # --- Section 6: Delete trades ---
     _render_delete_trades(db, trades)
+    _render_edit_trades(db, trades)

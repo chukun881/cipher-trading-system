@@ -361,13 +361,14 @@ def _section_data_status(db: TradingDB) -> None:
     # Data freshness with detail
     data_status = status.get("data_status", "no_data")
     freshness_map = {
-        "fresh": ("🟢 Fresh", f"All tickers have data ≤ 5 trading days behind"),
-        "stale": ("🟡 Stale", f"More than half of tickers are >5 trading days behind"),
-        "no_data": ("🔴 No Data", f"No OHLCV data available"),
+        "fresh": ("🟢 Fresh", "Data is up to date (≤ 5 trading days behind)"),
+        "stale": ("🟡 Stale", "More than half of tickers are > 5 trading days behind"),
+        "no_data": ("🔴 No Data", "No OHLCV data available"),
     }
     label, desc = freshness_map.get(data_status, ("⚪ Unknown", ""))
     c3.metric("Data Status", label)
-    c4.metric("", desc)
+    c4.write("")  # empty placeholder
+    st.caption(f"ℹ️ {desc}")
 
     # Per-ticker freshness breakdown
     if data_status == "fresh":

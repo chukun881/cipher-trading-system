@@ -221,15 +221,17 @@ def _section_current_holdings(db: TradingDB) -> None:
     # ── Actions per holding ──
     st.markdown("#### Actions")
     for h in holdings:
-        cols = st.columns([1, 1, 1, 1, 2])
-        with cols[0]:
+        h_cols = st.columns([1, 1, 1, 1, 1, 1])
+        with h_cols[0]:
             st.markdown(f"**{h['ticker']}**")
-        with cols[1]:
+        with h_cols[1]:
+            st.caption(f"{h['volume']} shares @ {_fmt_currency(h['buy_price'])}")
+        with h_cols[2]:
             if st.button("✖ Close", key=f"close_btn_{h['id']}"):
                 st.session_state.closing_holding_id = h["id"]
                 st.rerun()
-        with cols[2]:
-            if st.button("🔄 Update Stop", key=f"update_stop_{h['id']}"):
+        with h_cols[3]:
+            if st.button("🔄 Stop", key=f"update_stop_{h['id']}"):
                 try:
                     result = update_stops(h["ticker"], db=db)
                     if result.get("updated"):
@@ -241,10 +243,69 @@ def _section_current_holdings(db: TradingDB) -> None:
                         st.info(f"**{h['ticker']}** stop unchanged ({_fmt_currency(result['new_stop'])})")
                 except Exception as e:
                     st.error(f"Failed to update stop for {h['ticker']}: {e}")
-        with cols[3]:
-            if st.button("🗑️ Delete", key=f"delete_btn_{h['id']}"):
+        with h_cols[4]:
+            if st.button("✏️ Edit", key=f"edit_btn_{h['id']}"):
+                st.session_state.editing_holding_id = h["id"]
+                st.rerun()
+        with h_cols[5]:
+            if st.button("🗑️", key=f"delete_btn_{h['id']}"):
                 st.session_state.deleting_holding_id = h["id"]
                 st.rerun()
+
+    # ── Edit holding dialog ──
+    if "editing_holding_id" not in st.session_state:
+        st.session_state.editing_holding_id = None
+    if st.session_state.get("editing_holding_id"):
+        hid = st.session_state.editing_holding_id
+        holding = None
+        for h in holdings:
+            if h["id"] == hid:
+                holding = h
+                break
+        if holding:
+            st.markdown(f"#### ✏️ Edit {holding['ticker']}")
+            ec = st.columns([2, 2, 2, 2])
+            with ec[0]:
+                new_buy_price = st.text_input("Buy Price", value=str(holding['buy_price']), key="edit_h_buy_price")
+            with ec[1]:
+                new_volume = st.text_input("Shares", value=str(holding['volume']), key="edit_h_volume")
+            with ec[2]:
+                new_buy_date = st.text_input("Buy Date", value=holding['buy_date'], key="edit_h_buy_date")
+            with ec[3]:
+                new_notes = st.text_input("Notes", value=holding.get('notes', '') or '', key="edit_h_notes")
+
+            ec2 = st.columns([1, 1, 2])
+            with ec2[0]:
+                if st.button("💾 Save", key="save_holding_edit"):
+                    try:
+                        bp = float(new_buy_price)
+                        vol = float(new_volume)
+                        # Recalculate stop/target with new buy price
+                        ind = db.get_latest_indicators(holding['ticker'])
+                        atr = ind.get('atr_14') if ind else None
+                        if atr:
+                            new_stop = bp - 1.5 * atr
+                            new_target = bp + 2.5 * atr
+                        else:
+                            new_stop = holding['stop_loss']
+                            new_target = holding['target']
+                        db.conn.execute(
+                            "UPDATE holdings SET buy_price=?, volume=?, buy_date=?, stop_loss=?, target=?, notes=? WHERE id=?",
+                            (bp, vol, new_buy_date, new_stop, new_target, new_notes, hid),
+                        )
+                        db.conn.commit()
+                        st.session_state.editing_holding_id = None
+                        st.success(f"Updated **{holding['ticker']}** position")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Update failed: {e}")
+            with ec2[1]:
+                if st.button("❌ Cancel", key="cancel_holding_edit"):
+                    st.session_state.editing_holding_id = None
+                    st.rerun()
+        else:
+            st.session_state.editing_holding_id = None
+            st.rerun()
 
     # ── Delete confirmation ──
     if st.session_state.get("deleting_holding_id"):
