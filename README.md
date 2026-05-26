@@ -20,7 +20,6 @@ It does **not** execute trades. It does **not** screen the entire market. It doe
 
 **Recommended trader profile:**
 
-| | |
 |---|---|
 | **Style** | Swing trading (hold days to weeks) |
 | **Market** | US equities (NYSE / NASDAQ) |
