@@ -166,9 +166,9 @@ def _section_data_management(db: TradingDB) -> None:
             if total == 0:
                 st.warning("No active tickers to refresh.")
             else:
-                from data_fetcher import fetch_and_store_all
+                from data_fetcher import update_all
                 with st.spinner(f"Refreshing {total} ticker(s)… This may take a while."):
-                    result = fetch_and_store_all(db=db)
+                    result = update_all(db=db)
                 success = len(result.get("success", []))
                 failed = result.get("failed", [])
                 st.session_state.refresh_done = True

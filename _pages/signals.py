@@ -68,10 +68,6 @@ _ALERT_EMOJI = {
 }
 
 
-def _alert_sort_key(a: dict[str, Any]) -> int:
-    return _ALERT_PRIORITY.get(a.get("alert_type", ""), 99)
-
-
 # ======================================================================
 # Session state defaults
 # ======================================================================

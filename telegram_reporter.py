@@ -6,7 +6,7 @@ Handles message splitting for Telegram's 4096-character limit.
 
 Depends on:
     - db.py               (TradingDB)
-    - data_fetcher.py     (fetch_and_store_all / update_ticker)
+    - data_fetcher.py     (update_all / update_ticker)
     - alpha_engine.py     (analyze_all, check_holdings_alerts)
     - portfolio.py        (batch_update_stops)
     - watchlist_manager.py (check_stale_all)
