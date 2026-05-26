@@ -119,7 +119,7 @@ def _section_add_ticker(db: TradingDB) -> None:
             )
         with col_search:
             st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
-            search_clicked = st.button("Search", key="search_ticker_btn", use_container_width=True)
+            search_clicked = st.button("Search", key="search_ticker_btn", width="stretch")
 
         # Search results area (persists in session state)
         if search_clicked and ticker_input.strip():
@@ -280,7 +280,7 @@ def _section_active_watchlist(db: TradingDB) -> None:
 
         st.dataframe(
             display_df,
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
 

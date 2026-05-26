@@ -82,7 +82,7 @@ def _section_telegram(db: TradingDB) -> None:
 
     # Test connection
     st.markdown("---")
-    if st.button("🔧 Test Connection", use_container_width=True):
+    if st.button("🔧 Test Connection", width="stretch"):
         with st.spinner("Sending test message…"):
             from telegram_reporter import send_test_message
             ok = send_test_message(db=db)
@@ -119,7 +119,7 @@ def _section_schedule(db: TradingDB) -> None:
             placeholder="09:30",
             key="schedule_time_input",
         )
-        if st.button("📅 Set Schedule", use_container_width=True):
+        if st.button("📅 Set Schedule", width="stretch"):
             if schedule_input:
                 # Validate format
                 try:
@@ -139,7 +139,7 @@ def _section_schedule(db: TradingDB) -> None:
                 st.warning("Enter a time first.")
 
     with col_clear:
-        if st.button("🗑️ Clear Schedule", use_container_width=True):
+        if st.button("🗑️ Clear Schedule", width="stretch"):
             db.set_setting("schedule_time", "")
             st.success("Schedule cleared.")
             st.rerun()
@@ -160,7 +160,7 @@ def _section_data_management(db: TradingDB) -> None:
     col_refresh, col_incremental = st.columns(2)
 
     with col_refresh:
-        if st.button("🔄 Refresh All Data", use_container_width=True, type="primary"):
+        if st.button("🔄 Refresh All Data", width="stretch", type="primary"):
             tickers = db.get_active_tickers()
             total = len(tickers)
             if total == 0:
@@ -180,7 +180,7 @@ def _section_data_management(db: TradingDB) -> None:
                     st.success(f"Refresh complete: **{success}** ticker(s) updated successfully.")
 
     with col_incremental:
-        if st.button("⚡ Update Incremental", use_container_width=True):
+        if st.button("⚡ Update Incremental", width="stretch"):
             tickers = db.get_active_tickers()
             total = len(tickers)
             if total == 0:
@@ -216,7 +216,7 @@ def _section_data_management(db: TradingDB) -> None:
     st.markdown("---")
 
     # Clean up dropped data
-    if st.button("🧹 Clean Up Dropped Data (>90 days)", use_container_width=True):
+    if st.button("🧹 Clean Up Dropped Data (>90 days)", width="stretch"):
         from watchlist_manager import cleanup_dropped_data
         with st.spinner("Cleaning up old data for dropped tickers…"):
             result = cleanup_dropped_data(db=db)
@@ -355,7 +355,7 @@ def _section_danger_zone(db: TradingDB) -> None:
             if st.button(
                 "🔄 Reset All Settings",
                 disabled=not confirm,
-                use_container_width=True,
+                width="stretch",
             ):
                 from db import _DEFAULT_SETTINGS
                 for k, v in _DEFAULT_SETTINGS.items():
@@ -368,7 +368,7 @@ def _section_danger_zone(db: TradingDB) -> None:
             if st.button(
                 "🗑️ Clear All Signals",
                 disabled=not confirm,
-                use_container_width=True,
+                width="stretch",
             ):
                 db.conn.execute("DELETE FROM signals")
                 db.conn.commit()
@@ -380,7 +380,7 @@ def _section_danger_zone(db: TradingDB) -> None:
             if st.button(
                 "🗑️ Clear All Trades",
                 disabled=not confirm,
-                use_container_width=True,
+                width="stretch",
             ):
                 db.conn.execute("DELETE FROM trades")
                 db.conn.commit()
@@ -397,7 +397,7 @@ def _section_danger_zone(db: TradingDB) -> None:
                     data=f.read(),
                     file_name=f"trading_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db",
                     mime="application/x-sqlite3",
-                    use_container_width=True,
+                    width="stretch",
                 )
         else:
             st.warning("Database file not found for export.")

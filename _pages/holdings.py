@@ -113,7 +113,7 @@ def _section_open_position(db: TradingDB) -> None:
         with col_notes:
             notes = st.text_input("Notes (optional)", placeholder="e.g. Earnings play")
 
-        submitted = st.form_submit_button("📂 Open Position", use_container_width=True)
+        submitted = st.form_submit_button("📂 Open Position", width="stretch")
 
     if submitted:
         ticker = (ticker_manual.strip().upper()
@@ -216,7 +216,7 @@ def _section_current_holdings(db: TradingDB) -> None:
     # Display as dataframe for readability
     import pandas as pd
     df = pd.DataFrame(display_rows)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width="stretch", hide_index=True)
 
     # ── Actions per holding ──
     st.markdown("#### Actions")
@@ -390,9 +390,9 @@ def _section_close_position(db: TradingDB) -> None:
 
         col_confirm, col_cancel = st.columns(2)
         with col_confirm:
-            confirmed = st.form_submit_button("✅ Confirm Close", use_container_width=True)
+            confirmed = st.form_submit_button("✅ Confirm Close", width="stretch")
         with col_cancel:
-            cancelled = st.form_submit_button("❌ Cancel", use_container_width=True)
+            cancelled = st.form_submit_button("❌ Cancel", width="stretch")
 
     if cancelled:
         st.session_state.closing_holding_id = None
@@ -437,7 +437,7 @@ def _section_update_stops(db: TradingDB) -> None:
 
     col_btn, col_info = st.columns([1, 3])
     with col_btn:
-        if st.button("🔄 Update All Stops", use_container_width=True):
+        if st.button("🔄 Update All Stops", width="stretch"):
             with st.spinner("Updating stops for all positions..."):
                 results = batch_update_stops(db=db)
 
@@ -518,7 +518,7 @@ def _section_recent_closings(db: TradingDB) -> None:
         })
 
     df = pd.DataFrame(rows)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width="stretch", hide_index=True)
 
 
 # ======================================================================

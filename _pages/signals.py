@@ -114,7 +114,7 @@ def _section_run_analysis(db: TradingDB) -> None:
     else:
         st.caption("No analysis runs recorded yet.")
 
-    if st.button("▶ Run Analysis Now", type="primary", use_container_width=True):
+    if st.button("▶ Run Analysis Now", type="primary", width="stretch"):
         with st.spinner("Running full analysis pipeline…"):
             t0 = time.time()
 
@@ -254,7 +254,7 @@ def _section_today_signals(db: TradingDB) -> None:
                     "Close": _fmt_price(s.get("close")),
                     "Notes": s.get("notes") or "—",
                 })
-            st.dataframe(pd.DataFrame(hold_rows), use_container_width=True, hide_index=True)
+            st.dataframe(pd.DataFrame(hold_rows), width="stretch", hide_index=True)
 
 
 def _render_signal_card(s: dict[str, Any], color: str) -> None:
@@ -370,19 +370,19 @@ def _section_signal_history(db: TradingDB) -> None:
     if buy:
         st.markdown("##### 🟢 BUY")
         rows = _signals_to_rows(buy)
-        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
 
     # SELL
     if sell:
         st.markdown("##### 🔴 SELL")
         rows = _signals_to_rows(sell)
-        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
 
     # HOLD (collapsed)
     if hold:
         with st.expander(f"⚪ HOLD — {len(hold)} ticker(s)"):
             rows = _signals_to_rows(hold)
-            st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+            st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
 
 
 def _signals_to_rows(signals: list[dict[str, Any]]) -> list[dict[str, str]]:
@@ -414,7 +414,7 @@ def _section_telegram(db: TradingDB) -> None:
         if st.button(
             "📤 Send Report to Telegram",
             disabled=send_disabled,
-            use_container_width=True,
+            width="stretch",
         ):
             with st.spinner("Sending daily report…"):
                 from telegram_reporter import send_daily_report
@@ -426,7 +426,7 @@ def _section_telegram(db: TradingDB) -> None:
                 st.error("Failed to send report. Check logs and Telegram configuration.")
 
     with col_test:
-        if st.button("🔧 Send Test Message", use_container_width=True):
+        if st.button("🔧 Send Test Message", width="stretch"):
             with st.spinner("Sending test message…"):
                 from telegram_reporter import send_test_message
                 ok = send_test_message(db=db)
@@ -461,7 +461,7 @@ def _section_run_history(db: TradingDB) -> None:
                 "Duration": f"{r.get('duration_seconds', 0):.1f}s",
             })
 
-        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
 
 
 # ======================================================================

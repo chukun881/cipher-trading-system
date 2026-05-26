@@ -299,19 +299,19 @@ def _render_filters(db: TradingDB) -> tuple[str | None, str | None, str | None]:
 
     quick_selected = st.session_state.get("journal_quick", None)
 
-    if q1.button("📅 This Month", use_container_width=True):
+    if q1.button("📅 This Month", width="stretch"):
         st.session_state["journal_quick"] = "This Month"
         st.rerun()
-    if q2.button("📅 Last Month", use_container_width=True):
+    if q2.button("📅 Last Month", width="stretch"):
         st.session_state["journal_quick"] = "Last Month"
         st.rerun()
-    if q3.button("📅 Last 3 Months", use_container_width=True):
+    if q3.button("📅 Last 3 Months", width="stretch"):
         st.session_state["journal_quick"] = "Last 3 Months"
         st.rerun()
-    if q4.button("📅 This Year", use_container_width=True):
+    if q4.button("📅 This Year", width="stretch"):
         st.session_state["journal_quick"] = "This Year"
         st.rerun()
-    if q5.button("📅 All Time", use_container_width=True):
+    if q5.button("📅 All Time", width="stretch"):
         st.session_state["journal_quick"] = "All Time"
         st.rerun()
 
@@ -352,7 +352,7 @@ def _render_filters(db: TradingDB) -> tuple[str | None, str | None, str | None]:
         index=0,
     )
 
-    if st.button("✅ Apply Filter", type="primary", use_container_width=True):
+    if st.button("✅ Apply Filter", type="primary", width="stretch"):
         st.session_state["journal_start"] = start_date
         st.session_state["journal_end"] = end_date
         st.session_state["journal_ticker"] = selected_ticker
@@ -388,19 +388,19 @@ def _render_charts(df: pd.DataFrame) -> None:
 
     with tab1:
         fig = _chart_cumulative_pnl(df)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     with tab2:
         fig = _chart_pnl_distribution(df)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     with tab3:
         fig = _chart_pnl_by_ticker(df)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     with tab4:
         fig = _chart_win_rate_by_month(df)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     st.markdown("---")
 
@@ -422,7 +422,7 @@ def _render_trade_table(df: pd.DataFrame) -> None:
     st.dataframe(
         display_df,
         hide_index=True,
-        use_container_width=True,
+        width="stretch",
         column_config={
             "Buy Price": st.column_config.NumberColumn(format="$ %.2f"),
             "Sell Price": st.column_config.NumberColumn(format="$ %.2f"),

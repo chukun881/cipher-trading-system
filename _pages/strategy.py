@@ -292,9 +292,9 @@ def _edit_mode(db: TradingDB) -> None:
 
         col_save, col_reset = st.columns(2)
         with col_save:
-            save_clicked = st.form_submit_button("💾 Save Changes", use_container_width=True, type="primary")
+            save_clicked = st.form_submit_button("💾 Save Changes", width="stretch", type="primary")
         with col_reset:
-            reset_clicked = st.form_submit_button("🔄 Reset to Defaults", use_container_width=True)
+            reset_clicked = st.form_submit_button("🔄 Reset to Defaults", width="stretch")
 
     # --- Handle form submissions (outside form) ---
     if save_clicked:
